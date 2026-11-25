@@ -1,0 +1,21 @@
+{
+  "AppName": "Video Converter",
+  "EntryScript": "src\\Video-Converter.ps1",
+  "Icon": "assets\\Video-Converter.ico",
+  "Side": "Home",
+  "Description": "PowerShell/WPF tool for checking videos and converting them to play on a chosen TV or device with FFmpeg",
+  "RequireAdmin": false,
+  "Release": {
+    "Files": {
+      "Video-Converter.ps1": "src\\Video-Converter.ps1",
+      "New-VideoConverterShortcut.ps1": "src\\New-VideoConverterShortcut.ps1",
+      "Video Converter.cmd": "release\\Video Converter.cmd",
+      "assets\\Video-Converter.ico": "assets\\Video-Converter.ico",
+      "assets\\Video-Converter.png": "assets\\Video-Converter.png",
+      "README.md": "README.md",
+      "CHANGELOG.md": "CHANGELOG.md",
+      "LICENSE": "LICENSE"
+    },
+    "Shortcut": "New-VideoConverterShortcut.ps1"
+  }
+}
