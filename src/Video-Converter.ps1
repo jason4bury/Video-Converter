@@ -33,7 +33,7 @@ $ErrorActionPreference = 'Stop'
 # The version lives here and in CHANGELOG.md; Build.cmd stops if they disagree.
 # Two-digit minor: 1.00, 1.01 ... 1.10. The release folder is "Video Converter v<version>".
 $script:AppName     = 'Video Converter'
-$script:AppVersion  = '1.00'
+$script:AppVersion  = '1.01'
 $script:Description = 'PowerShell/WPF tool for checking videos and converting them to play on a chosen TV or device with FFmpeg'
 $script:Copyright   = 'Copyright (c) 2026 Jason Rhodes'
 $script:RepoUrl     = 'https://github.com/jason4bury/Video-Converter'
@@ -137,7 +137,7 @@ function Get-AppSetting {
     $s = [ordered]@{
         Look = 'Light'; Target = $script:DefaultTarget; Quality = 'Balanced'; FileType = 'Auto'; VideoOut = 'Auto'
         SaveTo = 'Beside'; OutFolder = ''; Originals = 'Keep'; Srt = $true; Gpu = $true; FFmpeg = ''; LastFolder = ''
-        SendMode = 'Off'; SendFolder = ''; Notify = $true; KeepList = $true
+        SendMode = 'Off'; SendFolder = ''; Notify = $true
         CustomType = 'mp4'; CustomVideo = 'h264'; CustomSound = 'aac'; CustomSize = '2160'
     }
     if (Test-Path -LiteralPath $script:SettingsPath) {
@@ -145,7 +145,7 @@ function Get-AppSetting {
             $j = Get-Content -LiteralPath $script:SettingsPath -Raw -Encoding UTF8 | ConvertFrom-Json
             foreach ($p in $j.PSObject.Properties) {
                 if (-not $s.Contains($p.Name)) { continue }
-                if ($p.Name -in 'Srt', 'Gpu', 'Notify', 'KeepList') { $s[$p.Name] = [bool]$p.Value } else { $s[$p.Name] = [string]$p.Value }
+                if ($p.Name -in 'Srt', 'Gpu', 'Notify') { $s[$p.Name] = [bool]$p.Value } else { $s[$p.Name] = [string]$p.Value }
             }
         } catch { Write-AppLog "settings.json couldn't be read: $($_.Exception.Message)" }
     }
@@ -1257,7 +1257,7 @@ MORE (FOR THE WHOLE LIST)
 - Find duplicates: the same film more than once in the list (by name, leaving out words such as 1080p, x265 or BluRay, or by having the same length), best copy first. Nothing is deleted: Select the extra copies picks them in the list.
 - Stats: what's in the list (picture and sound formats, sizes, file types, the biggest videos, how many play), and everything converted so far, with the space saved.
 - Save a report: the whole list, as a CSV for Excel (names such as 1917 stay as typed) or as a web page to open, print or share.
-- Save the list and Open a list: keep a big job and carry on another day. With "Open the same list next time" ticked, the list is kept anyway when you close the app.
+- Save the list and Open a list: keep a big job and carry on another day. The app always starts with an empty list.
 - Convert at a set time: starts converting at the time you type, such as 01:00, as long as the app is left open. Cancel stops the wait.
 
 WHEN IT'S DONE
@@ -1493,7 +1493,6 @@ STYLES
               <ComboBoxItem Tag="Shutdown" Content="Shut the PC down"/>
             </ComboBox>
             <CheckBox x:Name="ChkNotify" Content="Tell me when it's done (a notification and a sound)"/>
-            <CheckBox x:Name="ChkKeepList" Content="Open the same list next time"/>
             <DockPanel Margin="0,16,0,0">
               <Button x:Name="BtnFfmpeg" DockPanel.Dock="Right" Content="Change..." Padding="10,3" Margin="8,0,0,0" VerticalAlignment="Center"/>
               <TextBlock x:Name="TxtFfmpeg" Foreground="{Soft}" FontSize="12" TextWrapping="Wrap" VerticalAlignment="Center"/>
@@ -3142,7 +3141,9 @@ function Export-Report([ValidateSet('Csv', 'Html')][string]$Kind, [string]$Path)
 }
 
 # --- Save and open the list ---------------------------------------------------
-$script:LastListPath = Join-Path $script:DataDir 'last-list.json'
+# v1.00 kept the list between runs in last-list.json; it always starts empty now, so that file is tidied away.
+$oldList = Join-Path $script:DataDir 'last-list.json'
+if (Test-Path -LiteralPath $oldList) { Remove-Item -LiteralPath $oldList -Force -ErrorAction SilentlyContinue }
 $script:Restore = @{}
 function Save-List([string]$Path) {
     $data = [ordered]@{ Target = $script:Settings.Target; Videos = @($script:Items | ForEach-Object { [ordered]@{ Path = $_.Path; State = $(if ($_.State -eq 'Done') { 'Done' } else { '' }); OutPath = $_.OutPath } }) }
@@ -3334,7 +3335,6 @@ function Show-Options {
     $ui.PanelSend.Visibility = if ($s.SendMode -ne 'Off') { 'Visible' } else { 'Collapsed' }
     $ui.TxtSend.Text = if ($s.SendFolder) { $s.SendFolder } else { '(not chosen yet)' }
     $ui.ChkNotify.IsChecked = [bool]$s.Notify
-    $ui.ChkKeepList.IsChecked = [bool]$s.KeepList
     $ui.PanelOut.Visibility = if ($s.SaveTo -eq 'Folder') { 'Visible' } else { 'Collapsed' }
     $ui.TxtOut.Text = if ($s.OutFolder) { $s.OutFolder } else { '(not chosen yet)' }
     $custom = [bool]$script:Targets[[string]$s.Target].Custom
@@ -3363,7 +3363,6 @@ function Read-Options {
     $s.Gpu = [bool]$ui.ChkGpu.IsChecked
     $s.SendMode = [string]$ui.CmbSend.SelectedItem.Tag
     $s.Notify = [bool]$ui.ChkNotify.IsChecked
-    $s.KeepList = [bool]$ui.ChkKeepList.IsChecked
     Save-AppSetting
     Show-Options
     Update-AllChecks
@@ -3414,7 +3413,7 @@ try {
                    'PillAll', 'PillNeeds', 'PillPlays', 'PillDone', 'PanelEmpty', 'TxtEmpty', 'LstVideos',
                    'TxtNoPicture', 'ImgPreview', 'TxtPrvName', 'TxtPrvFacts', 'BtnPlay', 'BtnSample', 'BtnFolder', 'BtnUtils', 'TxtVerdict', 'TxtReasons', 'TxtStepsHead', 'TxtSteps',
                    'PanelCustom', 'CmbCType', 'CmbCVideo', 'CmbCSound', 'CmbCSize', 'CmbQuality', 'PanelFormat', 'CmbFileType', 'CmbVideo', 'CmbSave', 'PanelOut', 'BtnOut', 'TxtOut',
-                   'CmbOriginals', 'ChkSrt', 'ChkGpu', 'TxtGpu', 'BtnFfmpeg', 'TxtFfmpeg', 'BtnMore', 'CmbSend', 'PanelSend', 'BtnSend', 'TxtSend', 'CmbWhenDone', 'ChkNotify', 'ChkKeepList') { $ui[$n] = $window.FindName($n) }
+                   'CmbOriginals', 'ChkSrt', 'ChkGpu', 'TxtGpu', 'BtnFfmpeg', 'TxtFfmpeg', 'BtnMore', 'CmbSend', 'PanelSend', 'BtnSend', 'TxtSend', 'CmbWhenDone', 'ChkNotify') { $ui[$n] = $window.FindName($n) }
     $script:UI = $ui
 
     [void](Initialize-FFmpeg)
@@ -3483,7 +3482,7 @@ try {
     } })
     $ui.ChkSrt.Add_Checked({ Invoke-Safely { Read-Options } }); $ui.ChkSrt.Add_Unchecked({ Invoke-Safely { Read-Options } })
     $ui.ChkGpu.Add_Checked({ Invoke-Safely { Read-Options } }); $ui.ChkGpu.Add_Unchecked({ Invoke-Safely { Read-Options } })
-    foreach ($c in 'ChkNotify', 'ChkKeepList') { $ui[$c].Add_Checked({ Invoke-Safely { Read-Options } }); $ui[$c].Add_Unchecked({ Invoke-Safely { Read-Options } }) }
+    foreach ($c in 'ChkNotify') { $ui[$c].Add_Checked({ Invoke-Safely { Read-Options } }); $ui[$c].Add_Unchecked({ Invoke-Safely { Read-Options } }) }
     $ui.CmbSend.Add_SelectionChanged({ Invoke-Safely {
         Read-Options
         if ($script:Settings.SendMode -ne 'Off' -and -not $script:Settings.SendFolder) { [void](Select-SendFolder) }
@@ -3533,9 +3532,6 @@ try {
         if (-not $script:FFprobe) { Set-Status 'FFmpeg is needed first: see the box at the top.' 'Warn' }
         else {
             Set-Status 'Pick what the videos should play on, then drop videos or folders onto the window (or use Add videos...).'
-            if ($script:Settings.KeepList -and (Test-Path -LiteralPath $script:LastListPath)) {
-                try { Open-List $script:LastListPath -Quiet } catch { Write-AppLog "Last list couldn't be opened: $($_.Exception.Message)" }
-            }
         }
     })
     $window.Add_Closing({
@@ -3548,10 +3544,6 @@ try {
         }
         [VcProbe]::Cancel = $true
         if ($script:Sample) { $script:Sample.Job.Stop() }
-        try {
-            if ($script:Settings.KeepList -and $script:Items.Count) { Save-List $script:LastListPath }
-            elseif (Test-Path -LiteralPath $script:LastListPath) { Remove-Item -LiteralPath $script:LastListPath -Force }
-        } catch { Write-AppLog "The list couldn't be kept: $($_.Exception.Message)" }
     })
     $window.Add_Closed({ $timer.Stop() })
     # Old preview pictures (over a week old) are tidied away.

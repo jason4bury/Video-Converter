@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.01] - 2026-11-26
+
+### Changed
+- The app always starts with an empty list: it no longer reopens last time's list (the Open the same list next time tick is gone). Save the list and Open a list in More still keep a job for another day.
+
 ## [1.00] - 2026-11-25
 First release.
 

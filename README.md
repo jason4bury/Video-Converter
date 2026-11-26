@@ -6,7 +6,7 @@
 
 Check which videos will play on your TV, phone or media server, and convert only the ones that won't.
 
-![Version](https://img.shields.io/badge/version-v1.00-blue) ![Platform](https://img.shields.io/badge/platform-Windows-0078D6) ![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE) ![Licence](https://img.shields.io/badge/licence-MIT-green) ![Last commit](https://img.shields.io/github/last-commit/jason4bury/Video-Converter)
+![Version](https://img.shields.io/badge/version-v1.01-blue) ![Platform](https://img.shields.io/badge/platform-Windows-0078D6) ![PowerShell](https://img.shields.io/badge/PowerShell-5.1-5391FE) ![Licence](https://img.shields.io/badge/licence-MIT-green) ![Last commit](https://img.shields.io/github/last-commit/jason4bury/Video-Converter)
 
 ## ✨ Features
 
@@ -22,7 +22,7 @@ Video Converter is a PowerShell/WPF tool that uses FFmpeg to check your videos a
 - **Safe**: originals are never changed. Each new file is checked (it must be as long as the original) before anything else happens, and originals go to the Recycle Bin only if you choose that.
 - **Graphics card encoding**: when a picture has to be converted it uses an NVIDIA (NVENC), Intel (Quick Sync) or AMD (AMF) encoder if one works on the PC (each is test-run when the app starts), which is several times faster. Without one it uses the processor, and if the card ever fails on a video that video is done again on the processor by itself.
 - **Utilities** for one video, each saving a new file and leaving the original alone: remove sound or subtitle tracks and pick the main sound, trim, make a GIF or a small clip, fix sound that's out of step, split into parts (by time or chapters), shrink under a size for sharing, save the sound (as it is or MP3), the subtitles or a still picture, make a contact sheet (shown to you first, then saved where you choose), clean up old tapes and DVDs for a big TV, add a cover and title, make quiet sound louder, turn a sideways video and remove tags.
-- **More, for the whole list**: join videos (in seconds when they match), find duplicates with the best copy first, stats (with the space saved over time), a report for Excel (CSV) or as a web page, save and reopen the list (it's also kept between runs), and convert at a set time.
+- **More, for the whole list**: join videos (in seconds when they match), find duplicates with the best copy first, stats (with the space saved over time), a report for Excel (CSV) or as a web page, save and reopen the list (the app itself always starts with an empty list), and convert at a set time.
 - **When it's done**: copy or move each finished video to a folder (your NAS films share, say), a Windows notification and sound, and sleep or shut down when the whole list is done (with 60 seconds to cancel).
 - **Choices**: quality Best, Balanced or Smaller files; save next to the original or in a folder you choose; keep the originals or send them to the Recycle Bin.
 - Light, Dark or the same as Windows, Help and About.
@@ -43,7 +43,7 @@ Video Converter is a PowerShell/WPF tool that uses FFmpeg to check your videos a
 
 ## 📦 Installation
 
-1. Download `Video-Converter-v1.00.zip` from the [latest release](../../releases/latest) and unzip it wherever you like to keep it.
+1. Download `Video-Converter-v1.01.zip` from the [latest release](../../releases/latest) and unzip it wherever you like to keep it.
 2. Double-click **Video Converter.cmd** in the unzipped folder. It makes a **Video Converter** shortcut there and in the Start menu, and starts the tool. From then on, use the shortcut, the Start menu or a pinned taskbar button.
 
 Nothing is installed and no Windows settings are changed. The shortcut runs the script with PowerShell's execution policy bypassed for that run only.
