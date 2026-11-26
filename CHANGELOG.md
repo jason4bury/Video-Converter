@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.02] - 2026-11-26
+
+### Fixed
+- Long tick-box labels (such as Use the graphics card when it can) wrap onto a second line instead of being cut off.
+
 ## [1.01] - 2026-11-26
 
 ### Changed

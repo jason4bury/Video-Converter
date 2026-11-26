@@ -33,7 +33,7 @@ $ErrorActionPreference = 'Stop'
 # The version lives here and in CHANGELOG.md; Build.cmd stops if they disagree.
 # Two-digit minor: 1.00, 1.01 ... 1.10. The release folder is "Video Converter v<version>".
 $script:AppName     = 'Video Converter'
-$script:AppVersion  = '1.01'
+$script:AppVersion  = '1.02'
 $script:Description = 'PowerShell/WPF tool for checking videos and converting them to play on a chosen TV or device with FFmpeg'
 $script:Copyright   = 'Copyright (c) 2026 Jason Rhodes'
 $script:RepoUrl     = 'https://github.com/jason4bury/Video-Converter'
@@ -301,7 +301,9 @@ $script:Styles = @'
           <Border x:Name="Box" Width="18" Height="18" CornerRadius="4" Background="{Field}" BorderBrush="{Line}" BorderThickness="1" VerticalAlignment="Top" Margin="0,1,0,0">
             <TextBlock x:Name="Tick" Text="&#xE73E;" FontFamily="Segoe MDL2 Assets" FontSize="11" Foreground="{AccentInk}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
           </Border>
-          <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center"/>
+          <ContentPresenter Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center">
+            <ContentPresenter.Resources><Style TargetType="TextBlock"><Setter Property="TextWrapping" Value="Wrap"/></Style></ContentPresenter.Resources>
+          </ContentPresenter>
         </Grid>
         <ControlTemplate.Triggers>
           <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Box" Property="BorderBrush" Value="{Accent}"/></Trigger>
